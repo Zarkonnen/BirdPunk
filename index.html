@@ -32,6 +32,8 @@ var nextSymbol = 100;
 var t = 0;
 var playerPosSet = false;
 
+var particles = [];
+
 var symbols = {
     "1": {x: 0, y: 0, w: 10, h: 14},
     "2": {x: 16, y: 0, w: 11, h: 14},
@@ -186,20 +188,52 @@ function tick(ms) {
             c.fillStyle = "rgba(200, 220, 255, 0.5)";
             c.fillRect(0, 0, canvas.width, canvas.height);
         }
-        birds.forEach(function(b) {
+        birds = birds.filter(function(b) {
             if (b.layer() == layer) {
                 b.physics(ms/1000.0);
                 b.draw(-p.posZ());
             }
             if (b.layer() == 0 && b.contains(p.posX() + 8, p.posY() + 8)) {
-                p.setCurrentBird(b);
                 p.setPosZ(0);
+                if (b.isTarget()) {
+                    for (var py = 0; py < 128; py += 3) {
+                        for (var px = 0; px < 128; px += 3) {
+                            if (b.contains(Math.floor(b.posX()) + px, Math.floor(b.posY()) + py)) {
+                                var dir = Math.random() * Math.PI * 2;
+                                particles.push({
+                                    x: Math.floor(b.posX()) + px,
+                                    y: Math.floor(b.posY()) + py,
+                                    dx: Math.cos(dir),
+                                    dy: Math.sin(dir),
+                                    speed: 0,
+                                    accel: 0.0001,
+                                    life: Math.random() * 3000
+                                });
+                            }
+                        }
+                    }
+                    return false;
+                }
+                p.setCurrentBird(b);
                 /*c.strokeStyle = "green";
                 c.strokeRect(p.posX(), p.posY(), 16, 16);
                 c.strokeRect(b.posX(), b.posY(), 128, 128);*/
             }
+            return true;
         });
     }
+    
+    c.fillStyle = "red";
+    particles = particles.filter(function(p) {
+        p.life -= ms;
+        p.speed += p.accel * ms;
+        if (p.speed > 0.02) {
+            p.x += p.dx * p.speed * ms;
+            p.y += p.dy * p.speed * ms;
+        }
+        c.fillRect(p.x - 1, p.y - 1, 3, 3);
+        return p.life > 0;
+    });
 
     p.physics(ms/1000.0);
     p.draw();
