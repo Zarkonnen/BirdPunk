@@ -4,6 +4,16 @@
         <title>Game</title>
         <script src="jquery-3.1.1.min.js"></script>
         <script src="howler.min.js"></script>
+        <style>
+            canvas { 
+				image-rendering: optimizeSpeed; 
+				image-rendering: -moz-crisp-edges; 
+				image-rendering: -webkit-optimize-contrast; 
+				image-rendering: optimize-contrast; 
+				image-rendering: pixelated; 
+				-ms-interpolation-mode: nearest-neighbor;
+			}
+        </style>
     </head>
     <body style="margin: 0; padding: 0; background: black;">
         <canvas width="800" height="600" allowfullscreen="true" id="gameCanvas" style="margin-left: 10px; margin-top: 10px;"></canvas>
@@ -91,14 +101,15 @@ function Player(){
         posX += velX * delta;
         posY += velY * delta;
 
-        spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
+        if(velX!=0||velY!=0)
+            spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
     }
 
     this.draw = function(){
-        c.translate(posX+8, posY+8);
+        c.translate(Math.round(posX+8), Math.round(posY+8));
         
         c.rotate(spriteAngle);
-        c.translate(-(posX+8), -(posY+8));
+        c.translate(-Math.round(posX+8), -Math.round(posY+8));
         img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16
             , velX!=0&&velY!=0?16:0, 16, 16);
         c.resetTransform();
@@ -143,7 +154,7 @@ function img(img, x, y, ox, oy, sx, sy) {
         images[img].src = "graphics/" + img + ".png";
     }
     c.drawImage(images[img], ox || 0, oy || 0, sx || images[img].width, sy || images[img].height,
-        x, y, sx || images[img].width, sy || images[img].height);
+        Math.round(x), Math.round(y), sx || images[img].width, sy || images[img].height);
 }
 
 var masks = {};
