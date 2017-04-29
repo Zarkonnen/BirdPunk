@@ -124,6 +124,7 @@ function Bird() {
     var xSpeed = 0;
     var ySpeed = 0;
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
+    var spriteAngle = Math.PI / 2;
     
     this.physics = function(delta){
         posX += delta * xSpeed;
@@ -131,7 +132,11 @@ function Bird() {
     }
 
     this.draw = function(){
+        c.translate(Math.round(posX+64), Math.round(posY+64));
+        c.rotate(spriteAngle);
+        c.translate(-Math.round(posX+64), -Math.round(posY+64));
         img("spritesheet", posX, posY, sprite.x, sprite.y, sprite.w, sprite.h);
+        c.resetTransform();
     }
     
     this.contains = function(testX, testY) {
@@ -139,8 +144,8 @@ function Bird() {
             return false;
         }
         var m = masks["spritesheet"];
-        var maskX = Math.floor(testX - posX) + sprite.x;
-        var maskY = Math.floor(testY - posY) + sprite.y;
+        var maskX = Math.floor(Math.cos(-spriteAngle) * (testX - posX - 64) - Math.sin(-spriteAngle) * (testY - posY - 64) + sprite.x + 64);
+        var maskY = Math.floor(Math.sin(-spriteAngle) * (testX - posX - 64) + Math.cos(-spriteAngle) * (testY - posY - 64) + sprite.y + 64);
         return maskY >= 0 && maskX >= 0 && maskY < m.length && maskX < m[0].length && m[maskY][maskX];
     }
 }
