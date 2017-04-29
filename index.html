@@ -60,6 +60,13 @@ var dirs = [
 ];
 
 function tick(ms) {
+    if (birds.length == 0) {
+        for (var i = 0; i < 100; i++) {
+            var dir = dirs[Math.floor(Math.random() * dirs.length)];
+            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * 30, dir.dy * 30, dir.angle + Math.PI / 2, Math.floor(Math.random() * 5)));
+        }
+    }
+
     c.resetTransform();
     c.fillStyle = "#aabbff";
     c.fillRect(0, 0, canvas.width, canvas.height);
@@ -70,6 +77,10 @@ function tick(ms) {
             return b.layer() >= 0;
         });
         p.setPosZ(p.posZ() - 1);
+        for (var i = 0; i < 20; i++) {
+            var dir = dirs[Math.floor(Math.random() * dirs.length)];
+            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * 30, dir.dy * 30, dir.angle + Math.PI / 2, 5));
+        }
     }
 
     p.setCurrentBird(null);
@@ -79,13 +90,14 @@ function tick(ms) {
         birds.forEach(function(b) {
             if (b.layer() == layer) {
                 b.physics(ms/1000.0);
-                b.draw();
+                b.draw(-p.posZ());
             }
             if (b.layer() == 0 && b.contains(p.posX() + 8, p.posY() + 8)) {
                 p.setCurrentBird(b);
-                c.strokeStyle = "green";
+                p.setPosZ(0);
+                /*c.strokeStyle = "green";
                 c.strokeRect(p.posX(), p.posY(), 16, 16);
-                c.strokeRect(b.posX(), b.posY(), 128, 128);
+                c.strokeRect(b.posX(), b.posY(), 128, 128);*/
             }
         });
     }
@@ -149,11 +161,6 @@ function Player(){
 }
 
 var birds = [];
-
-birds.push(new Bird(0, 300, 10, 0, Math.PI / 2, 0));
-birds.push(new Bird(-80, 500, 10, 0, Math.PI / 2, 1));
-birds.push(new Bird(300, 0, 0, 10, Math.PI, 2));
-birds.push(new Bird(500, 1200, 0, -10, 0, 3));
     
 function Bird(x, y, dx, dy, angle, theLayer) {
     var posX = x;
@@ -174,12 +181,24 @@ function Bird(x, y, dx, dy, angle, theLayer) {
     this.physics = function(delta){
         posX += delta * xSpeed;
         posY += delta * ySpeed;
+        if (posX < -128) {
+            posX += c.width;
+        }
+        if (posX > c.width) {
+            posX -= c.width + 128;
+        }
+        if (posY < -128) {
+            posY += c.height;
+        }
+        if (posY > c.height) {
+            posY -= c.height + 128;
+        }
     }
 
-    this.draw = function(){
+    this.draw = function(layerOffset){
         c.translate(Math.round(posX+64), Math.round(posY+64));
         c.rotate(spriteAngle);
-        c.scale(1.0 - layer * 0.2, 1.0 - layer * 0.2);
+        c.scale(1.0 - (layer + layerOffset) * 0.2, 1.0 - (layer + layerOffset) * 0.2);
         img("spritesheet", -64, -64, sprite.x, sprite.y, sprite.w, sprite.h);
         c.resetTransform();
     }
