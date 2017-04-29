@@ -64,10 +64,12 @@ function tick(ms) {
     c.fillStyle = "#aabbff";
     c.fillRect(0, 0, canvas.width, canvas.height);
 
+    p.setCurrentBird(null);
     birds.forEach(function(b) {
         b.physics(ms/1000.0);
         b.draw();
         if (b.contains(p.posX() + 8, p.posY() + 8)) {
+            p.setCurrentBird(b);
             c.strokeStyle = "green";
             c.strokeRect(p.posX(), p.posY(), 16, 16);
         }
@@ -90,6 +92,9 @@ function Player(){
     this.posY = function() { return posY; }
     var speed = 32;
     var spriteAngle = 0;
+    var currentBird = 0;
+    this.setCurrentBird = function(b) { currentBird = b; }
+    this.getCurrentBird = function() { return currentBird; }
 
     this.physics = function(delta){
         velX = velY = 0;
@@ -101,6 +106,11 @@ function Player(){
         }, this);
         posX += velX * delta;
         posY += velY * delta;
+        
+        if (currentBird) {
+            posX += currentBird.xSpeed() * delta;
+            posY += currentBird.ySpeed() * delta;
+        }
 
         if(velX!=0||velY!=0)
             spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
@@ -131,6 +141,9 @@ function Bird(x, y, dx, dy, angle) {
     var ySpeed = dy;
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
     var spriteAngle = angle;
+    
+    this.xSpeed = function() { return xSpeed; }
+    this.ySpeed = function() { return ySpeed; }
     
     this.physics = function(delta){
         posX += delta * xSpeed;
