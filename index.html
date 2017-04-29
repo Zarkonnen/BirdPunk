@@ -129,7 +129,7 @@ function tick(ms) {
     if (birds.length == 0) {
         for (var i = 0; i < 100; i++) {
             var dir = dirs[Math.floor(Math.random() * dirs.length)];
-            birds.push(new Bird(c.width * Math.random(), c.height * Math.random(), dir.dx * 64, dir.dy * 64, dir.angle + Math.PI / 2, Math.floor(Math.random() * 5)));
+            birds.push(new Bird(2000 * Math.random(), 2000 * Math.random(), dir.dx * 64, dir.dy * 64, dir.angle + Math.PI / 2, Math.floor(Math.random() * 5)));
         }
     }
 
@@ -157,7 +157,7 @@ function tick(ms) {
     p.setCurrentBird(null);
     for (var layer = 5; layer >= -1; layer--) {
         if (layer > 0) {
-            c.fillStyle = "rgba(200, 220, 255, 0.3)";
+            c.fillStyle = "rgba(200, 220, 255, 0.5)";
             c.fillRect(0, 0, canvas.width, canvas.height);
         }
         birds.forEach(function(b) {
