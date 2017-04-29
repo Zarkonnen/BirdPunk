@@ -72,6 +72,7 @@ function tick(ms) {
             p.setCurrentBird(b);
             c.strokeStyle = "green";
             c.strokeRect(p.posX(), p.posY(), 16, 16);
+            c.strokeRect(b.posX(), b.posY(), 128, 128);
         }
     });
 
@@ -142,6 +143,8 @@ function Bird(x, y, dx, dy, angle) {
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
     var spriteAngle = angle;
     
+    this.posX = function() { return posX; }
+    this.posY = function() { return posY; }
     this.xSpeed = function() { return xSpeed; }
     this.ySpeed = function() { return ySpeed; }
     
@@ -165,7 +168,7 @@ function Bird(x, y, dx, dy, angle) {
         var m = masks["spritesheet"];
         var maskX = Math.floor(Math.cos(-spriteAngle) * (testX - posX - 64) - Math.sin(-spriteAngle) * (testY - posY - 64) + sprite.x + 64);
         var maskY = Math.floor(Math.sin(-spriteAngle) * (testX - posX - 64) + Math.cos(-spriteAngle) * (testY - posY - 64) + sprite.y + 64);
-        return maskY >= 0 && maskX >= 0 && maskY < m.length && maskX < m[0].length && m[maskY][maskX];
+        return maskY >= sprite.y && maskX >= sprite.x && maskY < sprite.y + sprite.h && maskX < sprite.x + sprite.w && m[maskY][maskX];
     }
 }
 
