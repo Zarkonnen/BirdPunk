@@ -65,16 +65,22 @@ function tick(ms) {
     c.fillRect(0, 0, canvas.width, canvas.height);
 
     p.setCurrentBird(null);
-    birds.forEach(function(b) {
-        b.physics(ms/1000.0);
-        b.draw();
-        if (b.contains(p.posX() + 8, p.posY() + 8)) {
-            p.setCurrentBird(b);
-            c.strokeStyle = "green";
-            c.strokeRect(p.posX(), p.posY(), 16, 16);
-            c.strokeRect(b.posX(), b.posY(), 128, 128);
-        }
-    });
+    for (var layer = 5; layer >= 0; layer--) {
+        c.fillStyle = "rgba(200, 220, 255, 0.3)";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        birds.forEach(function(b) {
+            if (b.layer() == layer) {
+                b.physics(ms/1000.0);
+                b.draw();
+            }
+            if (b.layer() == 0 && b.contains(p.posX() + 8, p.posY() + 8)) {
+                p.setCurrentBird(b);
+                c.strokeStyle = "green";
+                c.strokeRect(p.posX(), p.posY(), 16, 16);
+                c.strokeRect(b.posX(), b.posY(), 128, 128);
+            }
+        });
+    }
 
     p.physics(ms/1000.0);
     p.draw();
@@ -130,19 +136,21 @@ function Player(){
 
 var birds = [];
 
-birds.push(new Bird(0, 300, 10, 0, Math.PI / 2));
-birds.push(new Bird(-80, 500, 10, 0, Math.PI / 2));
-birds.push(new Bird(300, 0, 0, 10, Math.PI));
-birds.push(new Bird(500, 1200, 0, -10, 0));
+birds.push(new Bird(0, 300, 10, 0, Math.PI / 2, 0));
+birds.push(new Bird(-80, 500, 10, 0, Math.PI / 2, 1));
+birds.push(new Bird(300, 0, 0, 10, Math.PI, 2));
+birds.push(new Bird(500, 1200, 0, -10, 0, 3));
     
-function Bird(x, y, dx, dy, angle) {
+function Bird(x, y, dx, dy, angle, theLayer) {
     var posX = x;
     var posY = y;
     var xSpeed = dx;
     var ySpeed = dy;
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
     var spriteAngle = angle;
+    var layer = theLayer;
     
+    this.layer = function() { return layer; }
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
     this.xSpeed = function() { return xSpeed; }
@@ -156,8 +164,8 @@ function Bird(x, y, dx, dy, angle) {
     this.draw = function(){
         c.translate(Math.round(posX+64), Math.round(posY+64));
         c.rotate(spriteAngle);
-        c.translate(-Math.round(posX+64), -Math.round(posY+64));
-        img("spritesheet", posX, posY, sprite.x, sprite.y, sprite.w, sprite.h);
+        c.scale(1.0 - layer * 0.2, 1.0 - layer * 0.2);
+        img("spritesheet", -64, -64, sprite.x, sprite.y, sprite.w, sprite.h);
         c.resetTransform();
     }
     
