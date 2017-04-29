@@ -203,6 +203,10 @@ function tick(ms) {
 
     p.physics(ms/1000.0);
     p.draw();
+    
+    birds = birds.filter(function(b) {
+        return (!!b.posX() || !!(b.posX() + 1)) && (!!b.posY() || !!(b.posY() + 1));
+    });
 }
 
 var p = new Player();
