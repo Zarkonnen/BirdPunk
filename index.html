@@ -75,26 +75,33 @@ function Player(){
     var velX = 0;
     var velY = 0;
 
-    var speed = 16;
-    
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
+    var speed = 32;
+    var spriteAngle = 0;
 
     this.physics = function(delta){
         velX = velY = 0;
         dirs.forEach(function(element) {
             if(keys[element.key] || keyCodes[element.arrow]){
-                velX = element.dx * speed;
-                velY = element.dy * speed;
+                velX += element.dx * speed;
+                velY += element.dy * speed;
             }
-            
         }, this);
         posX += velX * delta;
         posY += velY * delta;
+
+        spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
     }
 
     this.draw = function(){
-        img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16, 0, 16, 16);
+        c.translate(posX+8, posY+8);
+        
+        c.rotate(spriteAngle);
+        c.translate(-(posX+8), -(posY+8));
+        img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16
+            , velX!=0&&velY!=0?16:0, 16, 16);
+        c.resetTransform();
     }
 }
 
