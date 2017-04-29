@@ -156,7 +156,8 @@ function tick(ms) {
         p.setPosZ(p.posZ() - 1);
         for (var i = 0; i < 20; i++) {
             var dir = dirs[Math.floor(Math.random() * dirs.length)];
-            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * 30, dir.dy * 30, dir.angle + Math.PI / 2, 5));
+            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * (30+Math.random()*30
+            ), dir.dy * (30+Math.random()*30), dir.angle + Math.PI / 2, 5));
         }
     }
 
@@ -228,6 +229,9 @@ function Player(x, y){
 
         if(velX!=0||velY!=0)
             spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
+        
+        posX = Math.min(Math.max(8, posX), canvas.width-8);
+        posY = Math.min(Math.max(8, posY), canvas.height-8);
     }
 
     this.draw = function(){
