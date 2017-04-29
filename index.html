@@ -17,6 +17,16 @@ function tick(ms) {
     c.resetTransform();
     c.fillStyle = "black";
     c.fillRect(0, 0, canvas.width, canvas.height);
+    img("test", 0, 0);
+    if (masks["test"]) {
+        var m = masks["test"];
+        c.fillStyle = "red";
+        for (var y = 0; y < m.length; y++) { for (var x = 0; x < m[0].length; x++) {
+            if (m[y][x]) {
+                c.fillRect(x, y, 1, 1);
+            }
+        }}
+    }
 }
 
 var images = {};
@@ -29,6 +39,33 @@ function img(img, x, y) {
     }
     c.drawImage(images[img], x, y);
 }
+
+var masks = {};
+
+function cacheMask(img) {
+    var tmpImg = new Image();
+    tmpImg.onload = function() {
+        var tmpCanvas = document.createElement("canvas");
+        tmpCanvas.width = tmpImg.width;
+        tmpCanvas.height = tmpImg.height;
+        var tmpCtx = tmpCanvas.getContext("2d");
+        tmpCtx.drawImage(tmpImg, 0, 0);
+        var tmpData = tmpCtx.getImageData(0, 0, tmpImg.width, tmpImg.height).data;
+        var mask = [];
+        for (var y = 0; y < tmpImg.height; y++) {
+            var row = [];
+            mask.push(row);
+            for (var x = 0; x < tmpImg.width; x++) {
+                var value = tmpData[(y * tmpImg.width * 4) + x * 4];
+                row.push(value != 0);
+            }
+        }
+        masks[img] = mask;
+    };
+    tmpImg.src = "graphics/" + img + ".png";
+}
+
+cacheMask("test");
 
 var canvas = document.getElementById("gameCanvas");
 var c = canvas.getContext("2d");
