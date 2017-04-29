@@ -60,16 +60,24 @@ var dirs = [
 ];
 
 function tick(ms) {
+    if(clouds.length < 10){
+        clouds.push(new Cloud());
+    }
     if (birds.length == 0) {
         for (var i = 0; i < 100; i++) {
             var dir = dirs[Math.floor(Math.random() * dirs.length)];
-            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * 30, dir.dy * 30, dir.angle + Math.PI / 2, Math.floor(Math.random() * 5)));
+            birds.push(new Bird(c.width * Math.random(), c.height * Math.random(), dir.dx * 64, dir.dy * 64, dir.angle + Math.PI / 2, Math.floor(Math.random() * 5)));
         }
     }
 
     c.resetTransform();
     c.fillStyle = "#aabbff";
     c.fillRect(0, 0, canvas.width, canvas.height);
+
+    clouds.forEach(function(cloud) {
+        cloud.physics(ms/1000.0);
+        cloud.draw();
+    });
 
     if (p.posZ() > 0) {
         birds = birds.filter(function(b) {
@@ -121,7 +129,7 @@ function Player(){
     this.posZ = function() { return posZ; }
     this.setPosZ = function(z) { posZ = z; }
     var fallSpeed = 1;
-    var speed = 32;
+    var speed = 100;
     var spriteAngle = 0;
     var currentBird = 0;
     this.setCurrentBird = function(b) { currentBird = b; }
@@ -156,6 +164,41 @@ function Player(){
         c.translate(-Math.round(posX+8), -Math.round(posY+8));
         img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16
             , velX!=0&&velY!=0?16:0, 16, 16);
+        c.resetTransform();
+    }
+}
+
+var clouds = [];
+
+function Cloud(){
+    var posX = -256+(canvas.width)*Math.random();
+    var posY = -256+(canvas.height)*Math.random();
+
+    var dir = dirs[Math.floor(Math.random()*4)];
+    var speed = 10;
+
+    var sprite = {"x": 128, "y": 0, "w": 256, "h": 256};
+    var spriteAngle = Math.floor(Math.random()*4.0) *Math.PI*0.5;
+
+    this.physics = function(delta){
+
+        posX += delta * dir.dx * speed;
+        posY += delta * dir.dy * speed;
+
+        if(posX < -256 || posX > canvas.width || posY < -256 || posY > canvas.height){
+            var index = clouds.indexOf(this);
+            if (index > -1)
+                clouds.splice(index);
+        }
+    }
+
+    this.draw = function(){
+        
+
+        c.translate(Math.round(posX+128), Math.round(posY+128));
+        c.rotate(spriteAngle);
+        c.translate(-Math.round(posX+128), -Math.round(posY+128));
+        img("spritesheet", posX, posY, sprite.x, sprite.y, sprite.w, sprite.h);
         c.resetTransform();
     }
 }
