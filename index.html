@@ -123,7 +123,7 @@ function Bird() {
     var posY = 0;
     var xSpeed = 0;
     var ySpeed = 0;
-    var sprite = "test";
+    var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
     
     this.physics = function(delta){
         posX += delta * xSpeed;
@@ -131,16 +131,16 @@ function Bird() {
     }
 
     this.draw = function(){
-        img(sprite, posX, posY);
+        img("spritesheet", posX, posY, sprite.x, sprite.y, sprite.w, sprite.h);
     }
     
     this.contains = function(testX, testY) {
-        if (!masks[sprite]) {
+        if (!masks["spritesheet"]) {
             return false;
         }
-        var m = masks[sprite];
-        var maskX = Math.floor(testX - posX);
-        var maskY = Math.floor(testY - posY);
+        var m = masks["spritesheet"];
+        var maskX = Math.floor(testX - posX) + sprite.x;
+        var maskY = Math.floor(testY - posY) + sprite.y;
         return maskY >= 0 && maskX >= 0 && maskY < m.length && maskX < m[0].length && m[maskY][maskX];
     }
 }
@@ -182,7 +182,7 @@ function cacheMask(img) {
     tmpImg.src = "graphics/" + img + ".png";
 }
 
-cacheMask("test");
+cacheMask("spritesheet");
 
 var canvas = document.getElementById("gameCanvas");
 var c = canvas.getContext("2d");
