@@ -13,6 +13,46 @@ function hwl(name, volume) {
     return new Howl({src: ["sounds/" + name + ".ogg", "sounds/" + name + ".mp3", "sounds/" + name + ".wav"], volume: volume || 1});
 }
 
+var NORTH = 1;
+var SOUTH = 2;
+var EAST = 3;
+var WEST = 4;
+
+var dirs = [
+    {
+        dx: 0,
+        dy: 0
+    },
+    {
+        key: "W",
+        arrow: 38,
+        dx: 0,
+        dy: -1,
+        angle: -Math.PI / 2
+    },
+    {
+        key: "S",
+        arrow: 40,
+        dx: 0,
+        dy: 1,
+        angle: Math.PI / 2
+    },
+    {
+        key: "A",
+        arrow: 37,
+        dx: -1,
+        dy: 0,
+        angle: Math.PI
+    },
+    {
+        key: "D",
+        arrow: 39,
+        dx: 1,
+        dy: 0,
+        angle: 0
+    }
+];
+
 function tick(ms) {
     c.resetTransform();
     c.fillStyle = "black";
