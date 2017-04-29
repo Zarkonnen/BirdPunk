@@ -30,6 +30,7 @@ var msgIndex = 0;
 var msg = "1234 62 272 421!531 3 26....!!A AB CDG GED E";
 var nextSymbol = 100;
 var t = 0;
+var playerPosSet = false;
 
 var symbols = {
     "1": {x: 0, y: 0, w: 10, h: 14},
@@ -123,6 +124,11 @@ function tick(ms) {
         }
         return;
     }
+    if (!playerPosSet) {
+        p.setPosX(canvas.width / 2);
+        p.setPosY(canvas.height / 2);
+        playerPosSet = true;
+    }
     if(clouds.length < 10){
         clouds.push(new Cloud());
     }
@@ -181,9 +187,9 @@ function tick(ms) {
 
 var p = new Player();
 
-function Player(){
+function Player(x, y){
     var posX = 0;
-    var posY = 500;
+    var posY = 0;
     var posZ = 0;
 
     var velX = 0;
@@ -192,6 +198,8 @@ function Player(){
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
     this.posZ = function() { return posZ; }
+    this.setPosX = function(x) { posX = x; }
+    this.setPosY = function(y) { posY = y; }
     this.setPosZ = function(z) { posZ = z; }
     var fallSpeed = 1;
     var speed = 100;
