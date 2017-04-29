@@ -27,6 +27,24 @@ function tick(ms) {
             }
         }}
     }
+
+    p.physics();
+    p.draw();
+}
+
+var p = new Player();
+
+function Player(){
+    var posX = 0;
+    var posY = 0;
+
+    this.physics = function(){
+        
+    }
+
+    this.draw = function(){
+        img("spritesheet", posX, posY);
+    }
 }
 
 var images = {};
