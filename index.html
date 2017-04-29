@@ -61,19 +61,20 @@ var dirs = [
 
 function tick(ms) {
     c.resetTransform();
-    c.fillStyle = "black";
+    c.fillStyle = "#aabbff";
     c.fillRect(0, 0, canvas.width, canvas.height);
 
-    b.physics(ms/1000.0);
-    b.draw();
+    birds.forEach(function(b) {
+        b.physics(ms/1000.0);
+        b.draw();
+        if (b.contains(p.posX() + 8, p.posY() + 8)) {
+            c.strokeStyle = "green";
+            c.strokeRect(p.posX(), p.posY(), 16, 16);
+        }
+    });
 
     p.physics(ms/1000.0);
     p.draw();
-    
-    if (b.contains(p.posX() + 8, p.posY() + 8)) {
-        c.strokeStyle = "green";
-        c.strokeRect(p.posX(), p.posY(), 16, 16);
-    }
 }
 
 var p = new Player();
@@ -116,15 +117,20 @@ function Player(){
     }
 }
 
-var b = new Bird();
+var birds = [];
 
-function Bird() {
-    var posX = 0;
-    var posY = 0;
-    var xSpeed = 0;
-    var ySpeed = 0;
+birds.push(new Bird(0, 300, 10, 0, Math.PI / 2));
+birds.push(new Bird(-80, 500, 10, 0, Math.PI / 2));
+birds.push(new Bird(300, 0, 0, 10, Math.PI));
+birds.push(new Bird(500, 1200, 0, -10, 0));
+    
+function Bird(x, y, dx, dy, angle) {
+    var posX = x;
+    var posY = y;
+    var xSpeed = dx;
+    var ySpeed = dy;
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
-    var spriteAngle = Math.PI / 2;
+    var spriteAngle = angle;
     
     this.physics = function(delta){
         posX += delta * xSpeed;
