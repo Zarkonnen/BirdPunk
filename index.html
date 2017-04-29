@@ -73,14 +73,13 @@ var p = new Player();
 function Player(){
     var posX = 0;
     var posY = 0;
-    var speed = 1;
+    var speed = 16;
 
     this.physics = function(delta){
         dirs.forEach(function(element) {
             if(keys[element.key] || keyCodes[element.arrow]){
                 posX += element.dx * speed * delta;
                 posY += element.dy * speed * delta;
-                console.log(element.key);
             }
             
         }, this);
