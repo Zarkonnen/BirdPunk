@@ -316,6 +316,11 @@ function Player(x, y){
             img("birdese", killsX, 30, si.x, si.y, si.w, si.h);
             killsX += 20;
         }
+
+        c.fillStyle = "red";
+        c.font = "30px Arial";
+        c.fillText(""+kills,20, 40);
+        c.fillText(""+Math.round(timeLimit), 20, 80)
     }
 }
 
