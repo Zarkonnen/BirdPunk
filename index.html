@@ -160,6 +160,25 @@ function tick(ms) {
         }
     }
 
+    var hasTargetBird = false;
+    birds.forEach(function(b) {
+        if (b.isTarget()) { hasTargetBird = true; }
+    });
+    if (!hasTargetBird) {
+        for (var i = 0; i < birds.length; i++) {
+            if (birds[i].layer() == 3) {
+                birds[i].setTargetInfo([
+                    "BA GEBC",
+                    "GACD EFF",
+                    "FEA E GCC",
+                    "CAGE GEB",
+                    "EGG EGG"
+                ][Math.floor(Math.random() * 3)]);
+                break;
+            }
+        }
+    }
+
     p.setCurrentBird(null);
     for (var layer = 5; layer >= -1; layer--) {
         if (layer > 0) {
@@ -287,7 +306,10 @@ function Bird(x, y, dx, dy, angle, theLayer) {
     var spriteAngle = angle;
     var layer = theLayer;
     var opacity = 1;
+    var targetInfo = null;
 
+    this.setTargetInfo = function(ti) { targetInfo = ti; }
+    this.isTarget = function() { return !!targetInfo; }
     this.opacity = function() { return opacity; }
     this.setLayer = function(l) { layer = l; }    
     this.layer = function() { return layer; }
@@ -325,6 +347,25 @@ function Bird(x, y, dx, dy, angle, theLayer) {
         img("spritesheet", -64, -64, sprite.x, sprite.y + (layer < 0 ? 112 : 0), sprite.w, sprite.h);
         c.resetTransform();
         c.globalAlpha = 1;
+        if (targetInfo) {
+            var textX = posX;
+            var textY = posY - 10;
+            for (var i = 0; i < targetInfo.length; i++) {
+                var sym = targetInfo.substr(i, 1);
+                if (sym == "!") {
+                    textY += 30;
+                    textX = posX;
+                } else if (sym == ".") {
+                    // Do nothing
+                } else if (sym == " ") {
+                    textX += 12;
+                } else {
+                    var si = symbols[sym];
+                    img("birdese", textX, textY, si.x, si.y, si.w, si.h);
+                    textX += si.w + 3;
+                }
+            }
+        }
     }
     
     this.contains = function(testX, testY) {
