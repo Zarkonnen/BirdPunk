@@ -90,6 +90,32 @@ function Player(){
     }
 }
 
+var b = new Bird();
+
+function Bird() {
+    var posX = 0;
+    var posY = 0;
+    var xSpeed = 10;
+    var ySpeed = 0;
+    var sprite = "test";
+    
+    this.physics = function(delta){
+        posX += delta * xSpeed;
+        posY += delta * ySpeed;
+    }
+
+    this.draw = function(){
+        img("test", posX, posY);
+    }
+    
+    this.contains = function(testX, testY) {
+        if (!masks[sprite]) {
+            return false;
+        }
+        return 
+    }
+}
+
 var images = {};
 
 function img(img, x, y) {
