@@ -148,7 +148,7 @@ function tick(ms) {
         cloud.draw();
     });
 
-    if (p.posZ() > 0) {
+    if (p.posZ() > 1) {
         birds = birds.filter(function(b) {
             b.setLayer(b.layer() - 1);
             return b.layer() >= -1;
@@ -156,7 +156,8 @@ function tick(ms) {
         p.setPosZ(p.posZ() - 1);
         for (var i = 0; i < 20; i++) {
             var dir = dirs[Math.floor(Math.random() * dirs.length)];
-            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * 30, dir.dy * 30, dir.angle + Math.PI / 2, 5));
+            birds.push(new Bird(1000 * Math.random(), 1000 * Math.random(), dir.dx * (30+Math.random()*30
+            ), dir.dy * (30+Math.random()*30), dir.angle + Math.PI / 2, 5));
         }
     }
 
@@ -207,8 +208,8 @@ function tick(ms) {
 var p = new Player();
 
 function Player(x, y){
-    var posX = 0;
-    var posY = 0;
+    var posX = 100;
+    var posY = 200;
     var posZ = 0;
 
     var velX = 0;
@@ -220,7 +221,7 @@ function Player(x, y){
     this.setPosX = function(x) { posX = x; }
     this.setPosY = function(y) { posY = y; }
     this.setPosZ = function(z) { posZ = z; }
-    var fallSpeed = 1;
+    var fallSpeed = 0.6;
     var speed = 100;
     var spriteAngle = 0;
     var currentBird = 0;
@@ -247,6 +248,9 @@ function Player(x, y){
 
         if(velX!=0||velY!=0)
             spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
+        
+        posX = Math.min(Math.max(8, posX), canvas.width-8);
+        posY = Math.min(Math.max(8, posY), canvas.height-8);
     }
 
     this.draw = function(){
