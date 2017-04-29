@@ -64,6 +64,14 @@ function tick(ms) {
     c.fillStyle = "#aabbff";
     c.fillRect(0, 0, canvas.width, canvas.height);
 
+    if (p.posZ() > 0) {
+        birds = birds.filter(function(b) {
+            b.setLayer(b.layer() - 1);
+            return b.layer() >= 0;
+        });
+        p.setPosZ(p.posZ() - 1);
+    }
+
     p.setCurrentBird(null);
     for (var layer = 5; layer >= 0; layer--) {
         c.fillStyle = "rgba(200, 220, 255, 0.3)";
@@ -90,13 +98,17 @@ var p = new Player();
 
 function Player(){
     var posX = 0;
-    var posY = 0;
+    var posY = 500;
+    var posZ = 0;
 
     var velX = 0;
     var velY = 0;
 
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
+    this.posZ = function() { return posZ; }
+    this.setPosZ = function(z) { posZ = z; }
+    var fallSpeed = 1;
     var speed = 32;
     var spriteAngle = 0;
     var currentBird = 0;
@@ -117,6 +129,8 @@ function Player(){
         if (currentBird) {
             posX += currentBird.xSpeed() * delta;
             posY += currentBird.ySpeed() * delta;
+        } else {
+            posZ += fallSpeed * delta;
         }
 
         if(velX!=0||velY!=0)
@@ -149,7 +163,8 @@ function Bird(x, y, dx, dy, angle, theLayer) {
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 128};
     var spriteAngle = angle;
     var layer = theLayer;
-    
+
+    this.setLayer = function(l) { layer = l; }    
     this.layer = function() { return layer; }
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
