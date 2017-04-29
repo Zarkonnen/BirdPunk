@@ -196,6 +196,7 @@ function tick(ms) {
             if (b.layer() == 0 && b.contains(p.posX() + 8, p.posY() + 8)) {
                 p.setPosZ(0);
                 if (b.isTarget()) {
+                    p.makeKill();
                     for (var py = 0; py < 128; py += 3) {
                         for (var px = 0; px < 128; px += 3) {
                             if (b.contains(Math.floor(b.posX()) + px, Math.floor(b.posY()) + py)) {
@@ -253,7 +254,7 @@ function Player(x, y){
     var velX = 0;
     var velY = 0;
 
-    var kills = 0;
+    var kills = 7;
     var timeLimit = 60;
 
     this.posX = function() { return posX; }
@@ -308,11 +309,13 @@ function Player(x, y){
         img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16
             , velX!=0&&velY!=0?16:0, 16, 16);
         c.resetTransform();
-
-        c.fillStyle = "red";
-        c.font = "30px Arial";
-        c.fillText(""+kills,20, 40);
-        c.fillText(""+Math.round(timeLimit), c.width - 100, 40)
+        
+        var killsX = 30;
+        for (var i = 0; i < kills; i++) {
+            var si = symbols["C"];
+            img("birdese", killsX, 30, si.x, si.y, si.w, si.h);
+            killsX += 20;
+        }
     }
 }
 
