@@ -139,6 +139,11 @@ var cursor = {x: 300, y: 300};
 
 // Listen for key presses.
 function canvasKeyUp(e) {
+    keyCodes[e.which] = false;
+    keys[String.fromCharCode(e.which)] = false;
+}
+
+function canvasKeyDown(e) {
     keyCodes[e.which] = true;
     keys[String.fromCharCode(e.which)] = true;
 }
@@ -147,7 +152,7 @@ function pressed(key) {
     return !!keys[key] || !!keyCodes[key];
 }
 
-$('body').keypress(canvasKeyUp);
+$('body').keyup(canvasKeyUp).keydown(canvasKeyDown);
 
 // Listen for mouse stuff.
 function canvasClick(e) {
@@ -175,8 +180,6 @@ var lastUpdate = new Date().getTime();
 function nextFrame() {
     var currentTime = new Date().getTime();
     tick(currentTime - lastUpdate);
-    keys = {};
-    keyCodes = {};
     click = null;
     lastUpdate = currentTime;
     requestAnimationFrame(nextFrame);
