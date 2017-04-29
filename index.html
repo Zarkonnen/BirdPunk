@@ -148,7 +148,7 @@ function tick(ms) {
         cloud.draw();
     });
 
-    if (p.posZ() > 0) {
+    if (p.posZ() > 1) {
         birds = birds.filter(function(b) {
             b.setLayer(b.layer() - 1);
             return b.layer() >= -1;
@@ -188,8 +188,8 @@ function tick(ms) {
 var p = new Player();
 
 function Player(x, y){
-    var posX = 0;
-    var posY = 0;
+    var posX = 100;
+    var posY = 200;
     var posZ = 0;
 
     var velX = 0;
@@ -201,7 +201,7 @@ function Player(x, y){
     this.setPosX = function(x) { posX = x; }
     this.setPosY = function(y) { posY = y; }
     this.setPosZ = function(z) { posZ = z; }
-    var fallSpeed = 1;
+    var fallSpeed = 0.6;
     var speed = 100;
     var spriteAngle = 0;
     var currentBird = 0;
