@@ -53,19 +53,17 @@ function tick(ms) {
     c.resetTransform();
     c.fillStyle = "black";
     c.fillRect(0, 0, canvas.width, canvas.height);
-    img("test", 0, 0);
-    if (masks["test"]) {
-        var m = masks["test"];
-        c.fillStyle = "red";
-        for (var y = 0; y < m.length; y++) { for (var x = 0; x < m[0].length; x++) {
-            if (m[y][x]) {
-                c.fillRect(x, y, 1, 1);
-            }
-        }}
-    }
+
+    b.physics(ms/1000.0);
+    b.draw();
 
     p.physics(ms/1000.0);
     p.draw();
+    
+    if (b.contains(p.posX() + 8, p.posY() + 8)) {
+        c.strokeStyle = "green";
+        c.strokeRect(p.posX(), p.posY(), 16, 16);
+    }
 }
 
 var p = new Player();
@@ -78,6 +76,9 @@ function Player(){
     var velY = 0;
 
     var speed = 16;
+    
+    this.posX = function() { return posX; }
+    this.posY = function() { return posY; }
 
     this.physics = function(delta){
         velX = velY = 0;
@@ -102,7 +103,7 @@ var b = new Bird();
 function Bird() {
     var posX = 0;
     var posY = 0;
-    var xSpeed = 10;
+    var xSpeed = 0;
     var ySpeed = 0;
     var sprite = "test";
     
@@ -112,14 +113,17 @@ function Bird() {
     }
 
     this.draw = function(){
-        img("test", posX, posY);
+        img(sprite, posX, posY);
     }
     
     this.contains = function(testX, testY) {
         if (!masks[sprite]) {
             return false;
         }
-        return 
+        var m = masks[sprite];
+        var maskX = Math.floor(testX - posX);
+        var maskY = Math.floor(testY - posY);
+        return maskY >= 0 && maskX >= 0 && maskY < m.length && maskX < m[0].length && m[maskY][maskX];
     }
 }
 
