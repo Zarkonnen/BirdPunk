@@ -20,10 +20,6 @@ var WEST = 4;
 
 var dirs = [
     {
-        dx: 0,
-        dy: 0
-    },
-    {
         key: "W",
         arrow: 38,
         dx: 0,
@@ -68,7 +64,7 @@ function tick(ms) {
         }}
     }
 
-    p.physics();
+    p.physics(ms/1000.0);
     p.draw();
 }
 
@@ -77,9 +73,17 @@ var p = new Player();
 function Player(){
     var posX = 0;
     var posY = 0;
+    var speed = 1;
 
-    this.physics = function(){
-        
+    this.physics = function(delta){
+        dirs.forEach(function(element) {
+            if(keys[element.key] || keyCodes[element.arrow]){
+                posX += element.dx * speed * delta;
+                posY += element.dy * speed * delta;
+                console.log(element.key);
+            }
+            
+        }, this);
     }
 
     this.draw = function(){
@@ -143,7 +147,7 @@ function pressed(key) {
     return !!keys[key] || !!keyCodes[key];
 }
 
-$('body').keyup(canvasKeyUp);
+$('body').keypress(canvasKeyUp);
 
 // Listen for mouse stuff.
 function canvasClick(e) {
