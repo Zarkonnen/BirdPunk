@@ -253,6 +253,9 @@ function Player(x, y){
     var velX = 0;
     var velY = 0;
 
+    var kills = 0;
+    var timeLimit = 60;
+
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
     this.posZ = function() { return posZ; }
@@ -265,6 +268,10 @@ function Player(x, y){
     var currentBird = 0;
     this.setCurrentBird = function(b) { currentBird = b; }
     this.getCurrentBird = function() { return currentBird; }
+    
+    this.makeKill = function(){
+        kills += 1;
+    }
 
     this.physics = function(delta){
         velX = velY = 0;
@@ -287,8 +294,10 @@ function Player(x, y){
         if(velX!=0||velY!=0)
             spriteAngle = Math.floor(Math.atan2(velY, velX)/(Math.PI*0.5))*Math.PI*0.5+Math.PI*0.5;
         
-        posX = Math.min(Math.max(8, posX), canvas.width-8);
-        posY = Math.min(Math.max(8, posY), canvas.height-8);
+        posX = Math.min(Math.max(-8, posX), canvas.width-8);
+        posY = Math.min(Math.max(-8, posY), canvas.height-8);
+
+        timeLimit -= delta;
     }
 
     this.draw = function(){
@@ -299,6 +308,11 @@ function Player(x, y){
         img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16
             , velX!=0&&velY!=0?16:0, 16, 16);
         c.resetTransform();
+
+        c.fillStyle = "red";
+        c.font = "30px Arial";
+        c.fillText(""+kills,20, 40);
+        c.fillText(""+Math.round(timeLimit), c.width - 100, 40)
     }
 }
 
