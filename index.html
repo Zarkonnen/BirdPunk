@@ -344,16 +344,16 @@ function Bird(x, y, dx, dy, angle, theLayer) {
         posX += delta * xSpeed;
         posY += delta * ySpeed;
         if (posX < -128) {
-            posX += c.width;
+            posX += canvas.width + 128;
         }
         if (posX > c.width) {
-            posX -= c.width + 128;
+            posX -= canvas.width + 128;
         }
         if (posY < -128) {
-            posY += c.height;
+            posY += canvas.height + 128;
         }
         if (posY > c.height) {
-            posY -= c.height + 128;
+            posY -= canvas.height + 128;
         }
         if (layer < 0) {
             opacity = Math.max(0, opacity - delta);
