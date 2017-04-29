@@ -91,6 +91,34 @@ robinSound.play();
 
 function tick(ms) {
     t += ms;
+    if (p.timeLimit() <= 0) {
+        c.resetTransform();
+        c.fillStyle = "#aabbff";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        var extroText = "13 45 714!";
+        for (var i = 0; i < p.kills(); i++) {
+            extroText += "C";
+        }
+        extroText += "!A AB CDG GED E";
+        var textX = canvas.width / 2 - 190 / 2;
+        var textY = 100;
+        for (var i = 0; i < extroText.length; i++) {
+            var sym = extroText.substr(i, 1);
+            if (sym == "!") {
+                textY += 30;
+                textX = canvas.width / 2 - 190 / 2;
+            } else if (sym == ".") {
+                // Do nothing
+            } else if (sym == " ") {
+                textX += 12;
+            } else {
+                var si = symbols[sym];
+                img("birdese", textX, textY, si.x, si.y, si.w, si.h);
+                textX += si.w + 3;
+            }
+        }
+        return;
+    }
     if (intro) {
         nextSymbol -= ms;
         if (nextSymbol <= 0) {
@@ -255,8 +283,10 @@ function Player(x, y){
     var velY = 0;
 
     var kills = 0;
-    var timeLimit = 60;
+    var timeLimit = 14 * 7 + 1;
 
+    this.kills = function() { return kills; }
+    this.timeLimit = function() { return timeLimit; }
     this.posX = function() { return posX; }
     this.posY = function() { return posY; }
     this.posZ = function() { return posZ; }
@@ -316,11 +346,25 @@ function Player(x, y){
             img("birdese", killsX, 30, si.x, si.y, si.w, si.h);
             killsX += 20;
         }
-
-        c.fillStyle = "red";
+        
+        var timeLimitAccum = timeLimit;
+        killsX = 30;
+        while (timeLimitAccum > 14) {
+            timeLimitAccum -= 14;
+            var si = symbols["G"];
+            img("birdese", killsX, 60, si.x, si.y, si.w, si.h);
+            killsX += 20;
+        }
+        while (timeLimitAccum > 2) {
+            timeLimitAccum -= 2;
+            var si = symbols["A"];
+            img("birdese", killsX, 60, si.x, si.y, si.w, si.h);
+            killsX += 20;
+        }
+        /*c.fillStyle = "red";
         c.font = "30px Arial";
         c.fillText(""+kills,20, 40);
-        c.fillText(""+Math.round(timeLimit), 20, 80)
+        c.fillText(""+Math.round(timeLimit), 20, 80)*/
     }
 }
 
