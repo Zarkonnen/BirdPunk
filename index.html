@@ -23,6 +23,31 @@ function hwl(name, volume) {
     return new Howl({src: ["sounds/" + name + ".ogg", "sounds/" + name + ".mp3", "sounds/" + name + ".wav"], volume: volume || 1});
 }
 
+var robinSound = hwl("robin2");
+var intro = true;
+var currentMsg = "";
+var msgIndex = 0;
+var msg = "1234 62 272 421!531 3 26....!!A AB CDG GED E";
+var nextSymbol = 100;
+var t = 0;
+
+var symbols = {
+    "1": {x: 0, y: 0, w: 10, h: 14},
+    "2": {x: 16, y: 0, w: 11, h: 14},
+    "3": {x: 31, y: 0, w: 9, h: 14},
+    "4": {x: 43, y: 0, w: 10, h: 14},
+    "5": {x: 55, y: 0, w: 12, h: 14},
+    "6": {x: 72, y: 0, w: 8, h: 14},
+    "7": {x: 85, y: 0, w: 8, h: 14},
+    "A": {x: 0, y: 21, w: 10, h: 14},
+    "B": {x: 16, y: 21, w: 11, h: 14},
+    "C": {x: 31, y: 21, w: 9, h: 14},
+    "D": {x: 43, y: 21, w: 10, h: 14},
+    "E": {x: 55, y: 21, w: 12, h: 14},
+    "F": {x: 72, y: 21, w: 8, h: 14},
+    "G": {x: 85, y: 21, w: 8, h: 14},
+};
+
 var NORTH = 1;
 var SOUTH = 2;
 var EAST = 3;
@@ -59,7 +84,45 @@ var dirs = [
     }
 ];
 
+robinSound.play();
+
 function tick(ms) {
+    t += ms;
+    if (intro) {
+        nextSymbol -= ms;
+        if (nextSymbol <= 0) {
+            nextSymbol += 200;
+            currentMsg += msg.substr(msgIndex, 1);
+            msgIndex++;
+        }
+        c.resetTransform();
+        c.fillStyle = "#aabbff";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        var textX = canvas.width / 2 - 190 / 2;
+        var textY = 100;
+        for (var i = 0; i < currentMsg.length; i++) {
+            var sym = currentMsg.substr(i, 1);
+            if (sym == "!") {
+                textY += 30;
+                textX = canvas.width / 2 - 190 / 2;
+            } else if (sym == ".") {
+                // Do nothing
+            } else if (sym == " ") {
+                textX += 12;
+            } else {
+                if (t > 10000 && Math.floor(t / 300) % 2 == 0 && {A:1, B:1, C:1, D:1, E:1, F:1, G:1}[sym]) {
+                    continue;
+                }
+                var si = symbols[sym];
+                img("birdese", textX, textY, si.x, si.y, si.w, si.h);
+                textX += si.w + 3;
+            }
+        }
+        if (t > 13000) {
+            intro = false;
+        }
+        return;
+    }
     if (birds.length == 0) {
         for (var i = 0; i < 100; i++) {
             var dir = dirs[Math.floor(Math.random() * dirs.length)];
