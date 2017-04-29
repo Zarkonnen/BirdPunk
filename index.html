@@ -73,20 +73,27 @@ var p = new Player();
 function Player(){
     var posX = 0;
     var posY = 0;
+
+    var velX = 0;
+    var velY = 0;
+
     var speed = 16;
 
     this.physics = function(delta){
+        velX = velY = 0;
         dirs.forEach(function(element) {
             if(keys[element.key] || keyCodes[element.arrow]){
-                posX += element.dx * speed * delta;
-                posY += element.dy * speed * delta;
+                velX = element.dx * speed;
+                velY = element.dy * speed;
             }
             
         }, this);
+        posX += velX * delta;
+        posY += velY * delta;
     }
 
     this.draw = function(){
-        img("spritesheet", posX, posY);
+        img("spritesheet", posX, posY, 0==velX&&0==velY?0:Math.floor((new Date().getTime() / 100)%2) * 16, 0, 16, 16);
     }
 }
 
@@ -118,13 +125,14 @@ function Bird() {
 
 var images = {};
 
-function img(img, x, y) {
+function img(img, x, y, ox, oy, sx, sy) {
     if (img == null) { return; }
     if (!images[img]) {
         images[img] = new Image();
         images[img].src = "graphics/" + img + ".png";
     }
-    c.drawImage(images[img], x, y);
+    c.drawImage(images[img], ox || 0, oy || 0, sx || images[img].width, sy || images[img].height,
+        x, y, sx || images[img].width, sy || images[img].height);
 }
 
 var masks = {};
