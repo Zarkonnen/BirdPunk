@@ -118,7 +118,7 @@ function tick(ms) {
                 textX += si.w + 3;
             }
         }
-        if (t > 13000) {
+        if (t > 13000 || click) {
             intro = false;
         }
         return;
@@ -137,7 +137,7 @@ function tick(ms) {
     if (p.posZ() > 0) {
         birds = birds.filter(function(b) {
             b.setLayer(b.layer() - 1);
-            return b.layer() >= 0;
+            return b.layer() >= -1;
         });
         p.setPosZ(p.posZ() - 1);
         for (var i = 0; i < 20; i++) {
@@ -147,9 +147,11 @@ function tick(ms) {
     }
 
     p.setCurrentBird(null);
-    for (var layer = 5; layer >= 0; layer--) {
-        c.fillStyle = "rgba(200, 220, 255, 0.3)";
-        c.fillRect(0, 0, canvas.width, canvas.height);
+    for (var layer = 5; layer >= -1; layer--) {
+        if (layer > 0) {
+            c.fillStyle = "rgba(200, 220, 255, 0.3)";
+            c.fillRect(0, 0, canvas.width, canvas.height);
+        }
         birds.forEach(function(b) {
             if (b.layer() == layer) {
                 b.physics(ms/1000.0);
@@ -233,7 +235,9 @@ function Bird(x, y, dx, dy, angle, theLayer) {
     var sprite = {"x": 0, "y": 32, "w": 128, "h": 111};
     var spriteAngle = angle;
     var layer = theLayer;
+    var opacity = 1;
 
+    this.opacity = function() { return opacity; }
     this.setLayer = function(l) { layer = l; }    
     this.layer = function() { return layer; }
     this.posX = function() { return posX; }
@@ -256,14 +260,20 @@ function Bird(x, y, dx, dy, angle, theLayer) {
         if (posY > c.height) {
             posY -= c.height + 128;
         }
+        if (layer < 0) {
+            opacity = Math.max(0, opacity - delta);
+        }
     }
 
     this.draw = function(layerOffset){
+        c.globalAlpha = opacity;
         c.translate(Math.round(posX+64), Math.round(posY+64));
         c.rotate(spriteAngle);
-        c.scale(1.0 - (layer + layerOffset) * 0.2, 1.0 - (layer + layerOffset) * 0.2);
-        img("spritesheet", -64, -64, sprite.x, sprite.y, sprite.w, sprite.h);
+        var zoom = Math.min(1, 1.0 - (layer + layerOffset) * 0.2);
+        c.scale(zoom, zoom);
+        img("spritesheet", -64, -64, sprite.x, sprite.y + (layer < 0 ? 112 : 0), sprite.w, sprite.h);
         c.resetTransform();
+        c.globalAlpha = 1;
     }
     
     this.contains = function(testX, testY) {
