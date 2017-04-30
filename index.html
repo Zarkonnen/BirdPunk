@@ -17,7 +17,7 @@
 			}
         </style>
     </head>
-    <body style="margin: 0; padding: 0; background: black; cursor: none;">
+    <body style="margin: 0; padding: 0; background: #aabbff; cursor: none;">
         <canvas width="800" height="600" allowfullscreen="true" id="gameCanvas" style="margin-left: 10px; margin-top: 10px;"></canvas>
         <script>
 
@@ -199,7 +199,7 @@ function tick(ms) {
     });
     if (!hasTargetBird) {
         for (var i = 0; i < birds.length; i++) {
-            if (birds[i].layer() == 5) {
+            if (birds[i].layer() == 5 && birds[i].posX() > 0 && birds[i].posX() < canvas.width - 128 && birds[i].posY() > 0 && birds[i].posY() < canvas.height - 128) {
                 birds[i].setTargetInfo([
                     "BA GEBC",
                     "GACD EFF",
